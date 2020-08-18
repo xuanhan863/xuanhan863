@@ -1,5 +1,5 @@
 - Twitter: [@zzzzhe](https://twitter.com/zzzzhe)
-- Wechat: [@xuanhan863]
+- Wechat: @xuanhan863
 
 
 ## I'm a Husband, Father, Developer, and start-up owner..

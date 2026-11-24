@@ -1,0 +1,37 @@
+# Regrows the bonsai every week. Copy to .github/workflows/bonsai.yml in your
+# profile repository (<you>/<you>).
+#
+# - The built-in token is enough: everything gitbonsai reads is public.
+# - It commits as github-actions[bot], never as you, so the tree doesn't water itself.
+# - Each SVG records the week it was grown, so every run commits a change and
+#   GitHub never pauses the schedule.
+name: bonsai
+on:
+  schedule:
+    - cron: "17 6 * * 1"   # Mondays 06:17 UTC: the week just ended is complete
+  workflow_dispatch:        # run it once by hand
+
+permissions:
+  contents: write
+
+jobs:
+  bonsai:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: StevenBtw/gitbonsai@v0.6.1
+        id: bonsai
+        with:
+          output-dir: assets
+          # legend: left        # what the colors and signs mean, beside the tree
+
+      - name: Commit if it changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # The snapshot too: the next run then fetches only recent months.
+          git add "${{ steps.bonsai.outputs.light }}" "${{ steps.bonsai.outputs.dark }}" \
+            "${{ steps.bonsai.outputs.snapshot }}"
+          git diff --cached --quiet || git commit -m "Grow bonsai"
+          git push
